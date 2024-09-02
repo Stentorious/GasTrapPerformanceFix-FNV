@@ -1,0 +1,31 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://qconsulting.ca/fo3/ModConfig5.0.xsd">
+	<moduleName>Gas Trap Performance Fix</moduleName>
+	<installSteps order="Explicit">
+		<installStep name="Gas Trap Performance Fix">
+			<optionalFileGroups order="Explicit">
+				<group name="Main File" type="SelectExactlyOne">
+					<plugins order="Explicit">
+						<plugin name="Plugin (Recommended)">
+							<description>Select if you want Gas Trap Performance Fix in plugin form. (ESP)</description>
+							<files>
+								<folder source="Main Files\Plugin" destination="" priority="0" />
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>
+						<plugin name="Scriptrunner">
+							<description>Select if you want Gas Trap Performance Fix in scriptrunner form. (ESPless)</description>
+							<files>
+								<folder source="Main Files\Scriptrunner" destination="" priority="0" />
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>
+					</plugins>
+				</group>
+			</optionalFileGroups>
+		</installStep>
+	</installSteps>
+</config>

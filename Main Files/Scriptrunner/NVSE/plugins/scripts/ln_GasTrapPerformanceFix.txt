@@ -1,0 +1,63 @@
+; Gas Trap Performance Fix 1.3 - Stentorious
+
+; Check for requirements
+if GetNVSEVersion > 5 && GetNVSERevision > 2 && GetNVSEBeta > 2
+else
+	return
+endif
+
+SetEventHandlerAlt "OnHitWith" ({ref rTarg, ref rWeap} => rTarg.do 5) 1::TrapGasFire01 2::ExplodesGasTrapsOnHit
+
+SetEventHandlerAlt "OnTriggerEnter" (begin Function {ref rTrig, ref rAct}
+
+	if eval (rAct.IsWeaponInList ExplodesGasTrapsOnTouch && rAct.IsWeaponOut) || rAct.HasMagicEffect FlamerMagicEffect
+		rTrig.do 5
+	endif
+
+end) 1::TrapGasFire01
+
+SetEventHandlerAlt "OnHitWith" (begin Function {ref rTarg, ref rWeap}
+
+	rTarg.do 5
+	if (NVDLC01KitchenSetupActivatorREF.nGasTraps != 3)
+		NVDLC01KitchenValve1REF.placeatme LargeExplosion
+		NVDLC01KitchenValve2REF.placeatme LargeExplosion
+		NVDLC01KitchenValve3REF.placeatme LargeExplosion
+		player.kill player 0
+		SetStage NVDLC01MQ03 255
+	endif
+
+end) 1::NVDLC01KitchenGasTrap 2::ExplodesGasTrapsOnHit
+
+SetEventHandlerAlt "OnTriggerEnter" (begin Function {ref rTrig, ref rAct}
+
+	if eval (rAct.IsWeaponInList ExplodesGasTrapsOnTouch && rAct.IsWeaponOut) || rAct.HasMagicEffect FlamerMagicEffect
+		rTrig.do 5
+		if (NVDLC01KitchenSetupActivatorREF.nGasTraps !=3)
+			NVDLC01KitchenValve1REF.placeatme LargeExplosion
+			NVDLC01KitchenValve2REF.placeatme LargeExplosion
+			NVDLC01KitchenValve3REF.placeatme LargeExplosion
+			player.kill player 0
+			SetStage NVDLC01MQ03 255
+		endif
+	endif
+
+end) 1::NVDLC01KitchenGasTrap
+
+SetEventHandlerAlt "OnHitWith" (begin Function {ref rTarg, ref rWeap}
+
+	ref rLinked = rTarg.GetLinkedRef
+	rLinked.enable 0
+	rTarg.do 5
+
+end) 1::V22TrapGasFire01 2::ExplodesGasTrapsOnHit
+
+SetEventHandlerAlt "OnTriggerEnter" (begin Function {ref rTrig, ref rAct}
+
+	if eval (rAct.IsWeaponInList ExplodesGasTrapsOnTouch && rAct.IsWeaponOut) || rAct.HasMagicEffect FlamerMagicEffect
+		ref rLinked = rTrig.GetLinkedRef
+		rLinked.enable 0
+		rTrig.do 5
+	endif
+
+end) 1::V22TrapGasFire01

@@ -1,0 +1,22 @@
+; Gas Trap Performance Fix 1.3 - Stentorious
+
+; Check for requirements
+if GetNVSEVersion > 5 && GetNVSERevision > 2 && GetNVSEBeta > 2
+else
+	MessageBoxEx "Gas Trap Performance Fix missing requirement!%rInstall xNVSE 6.3.3+."
+	return
+endif
+
+; Disable the laggy activator scripts
+SetScriptDisabled TrapGasSCRIPT 1
+SetScriptDisabled NVDLC01KitchenGasTrapSCRIPT 1
+
+; Replace Vault 22 explosion script
+array_var aTraps = GetFormRefs V22TrapGasFire01
+if aTraps
+	foreach array_var aForE <- aTraps
+		ref rTrap = *aForE
+		rTrap.SetScript (CompileScript "GasTrapPerformanceFix/Vault22.gek")
+	loop
+	aTraps = aForE = ar_Null
+endif

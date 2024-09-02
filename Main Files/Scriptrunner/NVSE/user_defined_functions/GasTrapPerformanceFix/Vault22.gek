@@ -1,0 +1,63 @@
+ref LinkedTrap
+ref ThisTrap
+
+begin onDestructionStageChange
+
+	if GetDestructionStage == 1 || GetDestructionStage == 2
+
+		; Enable linked gas traps
+		set LinkedTrap to GetLinkedRef
+		LinkedTrap.enable 0
+
+		; Need to manually enable all special sections
+		v22gastrapfirstintersection.enable 0
+		V22KeelyRoomGasStartRef.enable 0
+		V22MushroomGasStartRef.enable 0
+		V22Cave2RoomGasStartRef.enable 0
+		V22Cave1RoomGasStartRef.enable 0
+
+		; Special case gas traps
+		set ThisTrap to GetSelf
+
+		if ThisTrap.GetIsReference V22GasTrapFirstIntersection
+			V22FirstBranchGasTrapREF.do 5
+		endif
+
+		if ThisTrap.GetIsReference V22Cave2RoomGasStartRef
+			V22Cave2RoomPath1GasREF.do 5
+			V22Cave2RoomPath2GasREF.do 5
+			V22Cave2RoomPath3GasREF.do 5
+		endif
+
+		if ThisTrap.GetIsReference V22eSecondTrapREF
+			V22Cave1RoomGasStartRef.do 5
+			V22Cave1RoomPath1GasREF.do 5
+			V22Cave1RoomPath2GasREF.do 5
+			V22Cave1RoomPath3GasREF.do 5
+			V22Cave1RoomLeftPathGasREF.do 5
+			V22Cave1RoomRightPathGasREF.do 5
+		endif
+
+		; Hide the spores since they're supposedly destroyed
+		V22PlantSpores01.disable
+		V22PlantSpores02.disable
+		V22PlantSpores03.disable
+		V22PlantSpores04.disable
+		V22PlantSpores05.disable
+		V22PlantSpores06.disable
+		V22PlantSpores07.disable
+		V22PlantSpores08.disable
+		V22PlantSpores09.disable
+		V22PlantSpores10.disable
+		V22PlantSpores11.disable
+		V22PlantSpores12.disable
+
+		; Spore purge has been done, update quest
+		SetObjectiveCompleted VMS06 50 1
+		SetObjectiveDisplayed VMS06 60 1
+		Set VFreeformVault22.KeelyState to 5
+		KeelyREF.evp
+
+	endif
+
+end
