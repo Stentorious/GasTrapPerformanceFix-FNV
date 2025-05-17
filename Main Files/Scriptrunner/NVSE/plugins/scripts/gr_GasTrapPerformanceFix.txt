@@ -1,4 +1,12 @@
-; Gas Trap Performance Fix 1.3 - Stentorious
+; Gas Trap Performance Fix - Stentorious
+
+; Check for conflicting patches
+if eval IsModLoaded "Unofficial Patch NVSE Plus.esp"
+	return
+endif
+if eval IsModLoaded "TaleOfTwoWastelands.esm" && IsFormValid (EditorIDToFormID "GasLagFixScript")
+	return
+endif
 
 ; Check for requirements
 if GetNVSEVersion > 5 && GetNVSERevision > 2 && GetNVSEBeta > 2
@@ -13,10 +21,72 @@ SetScriptDisabled NVDLC01KitchenGasTrapSCRIPT 1
 
 ; Replace Vault 22 explosion script
 array_var aTraps = GetFormRefs V22TrapGasFire01
-if aTraps
-	foreach array_var aForE <- aTraps
-		ref rTrap = *aForE
+if eval (int iSize = Ar_Size aTraps) > 0
+	while (iSize -= 1) > -1
+		ref rTrap = aTraps[iSize]
 		rTrap.SetScript (CompileScript "GasTrapPerformanceFix/Vault22.gek")
 	loop
-	aTraps = aForE = ar_Null
+	aTraps = ar_Null
+endif
+
+; Vanilla gas trap
+SetEventHandler "OnHitWith" ({ref rTarg, ref rWeap} => rTarg.do 5) "first"::TrapGasFire01 "second"::ExplodesGasTrapsOnHit
+SetEventHandler "OnTriggerEnter" (begin Function {ref rTrig, ref rAct}
+	if eval (rAct.IsWeaponInList ExplodesGasTrapsOnTouch && rAct.IsWeaponOut) || rAct.HasMagicEffect FlamerMagicEffect
+		rTrig.do 5
+	endif
+end) "first"::TrapGasFire01
+
+
+; Dead money gas trap
+SetEventHandler "OnHitWith" (begin Function {ref rTarg, ref rWeap}
+	rTarg.do 5
+	if (NVDLC01KitchenSetupActivatorREF.nGasTraps != 3)
+		NVDLC01KitchenValve1REF.placeatme LargeExplosion
+		NVDLC01KitchenValve2REF.placeatme LargeExplosion
+		NVDLC01KitchenValve3REF.placeatme LargeExplosion
+		player.kill player 0
+		SetStage NVDLC01MQ03 255
+	endif
+end) "first"::NVDLC01KitchenGasTrap "second"::ExplodesGasTrapsOnHit
+
+SetEventHandler "OnTriggerEnter" (begin Function {ref rTrig, ref rAct}
+	if eval (rAct.IsWeaponInList ExplodesGasTrapsOnTouch && rAct.IsWeaponOut) || rAct.HasMagicEffect FlamerMagicEffect
+		rTrig.do 5
+		if (NVDLC01KitchenSetupActivatorREF.nGasTraps !=3)
+			NVDLC01KitchenValve1REF.placeatme LargeExplosion
+			NVDLC01KitchenValve2REF.placeatme LargeExplosion
+			NVDLC01KitchenValve3REF.placeatme LargeExplosion
+			player.kill player 0
+			SetStage NVDLC01MQ03 255
+		endif
+	endif
+end) "first"::NVDLC01KitchenGasTrap
+
+
+; Vault 22 gas trap
+SetEventHandler "OnHitWith" (begin Function {ref rTarg, ref rWeap}
+	ref rLinked = rTarg.GetLinkedRef
+	rLinked.enable 0
+	rTarg.do 5
+end) "first"::V22TrapGasFire01 "second"::ExplodesGasTrapsOnHit
+
+SetEventHandler "OnTriggerEnter" (begin Function {ref rTrig, ref rAct}
+	if eval (rAct.IsWeaponInList ExplodesGasTrapsOnTouch && rAct.IsWeaponOut) || rAct.HasMagicEffect FlamerMagicEffect
+		ref rLinked = rTrig.GetLinkedRef
+		rLinked.enable 0
+		rTrig.do 5
+	endif
+end) "first"::V22TrapGasFire01
+
+
+; Bio-Gas Canister
+if eval IsModLoaded "TaleOfTwoWastelands.esm"
+	ref rTemp = EditorIDToFormID "DLC04BioGasTrap01"
+	SetEventHandler "OnHitWith" ({ref rTarg, ref rWeap} => rTarg.do 5) "first"::rTemp "second"::ExplodesGasTrapsOnHit
+	SetEventHandler "OnTriggerEnter" (begin Function {ref rTrig, ref rAct}
+		if eval (rAct.IsWeaponInList ExplodesGasTrapsOnTouch && rAct.IsWeaponOut) || rAct.HasMagicEffect FlamerMagicEffect
+			rTrig.do 5
+		endif
+	end) "first"::rTemp
 endif
