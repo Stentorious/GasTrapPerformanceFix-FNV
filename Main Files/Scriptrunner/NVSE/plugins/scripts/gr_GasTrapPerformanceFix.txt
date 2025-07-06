@@ -9,9 +9,8 @@ if eval IsModLoaded "TaleOfTwoWastelands.esm" && IsFormValid (EditorIDToFormID "
 endif
 
 ; Check for requirements
-if GetNVSEVersion > 5 && GetNVSERevision > 2 && GetNVSEBeta > 2
-else
-	MessageBoxEx "Gas Trap Performance Fix missing requirement!%rInstall xNVSE 6.3.3+."
+if eval GetNVSEVersion < 6 || (GetNVSEVersion == 6 && GetNVSERevision < 4)
+	MessageBoxEx "Gas Trap Performance Fix missing requirement!%rInstall xNVSE 6.4.0+."
 	return
 endif
 
